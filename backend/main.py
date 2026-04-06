@@ -49,6 +49,9 @@ def get_teams():
             "SELECT team_id, name, abbreviation FROM teams ORDER BY name"
         )
         rows = cursor.fetchall()
+        for r in rows:
+            if str(r.get("abbreviation")).lower() == "nan" or not r.get("abbreviation"):
+                r["abbreviation"] = str(r["name"])[:3].upper()
         return rows
     finally:
         cursor.close()
@@ -61,13 +64,20 @@ def get_rankings():
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute(
-            "SELECT name, wins, losses, win_ratio FROM teams ORDER BY win_ratio DESC"
+            """
+            SELECT name, wins, losses, win_ratio, last_10_wins, last_10_losses, 
+                   (win_ratio * 100 + IFNULL(last_10_wins, 0)*2) AS team_score
+            FROM teams 
+            ORDER BY win_ratio DESC
+            """
         )
         rows = cursor.fetchall()
         # Convert Decimal to float for JSON serialisation
         for r in rows:
             if r.get("win_ratio") is not None:
                 r["win_ratio"] = float(r["win_ratio"])
+            if r.get("team_score") is not None:
+                r["team_score"] = float(r["team_score"])
         return rows
     finally:
         cursor.close()
@@ -81,9 +91,11 @@ def get_top_players(season: str = "2025-26", limit: int = 30):
     try:
         cursor.execute(
             """
-            SELECT p.full_name, ps.points_per_game, ps.player_score
+            SELECT p.full_name, ps.points_per_game, ps.assists_per_game, 
+                   ps.rebounds_per_game, ps.player_score, t.name AS team_name
             FROM player_stats ps
             JOIN players p ON ps.player_id = p.player_id
+            JOIN teams t ON p.team_id = t.team_id
             WHERE ps.season = %s
             ORDER BY ps.player_score DESC
             LIMIT %s
@@ -94,6 +106,10 @@ def get_top_players(season: str = "2025-26", limit: int = 30):
         for r in rows:
             if r.get("points_per_game") is not None:
                 r["points_per_game"] = float(r["points_per_game"])
+            if r.get("assists_per_game") is not None:
+                r["assists_per_game"] = float(r["assists_per_game"])
+            if r.get("rebounds_per_game") is not None:
+                r["rebounds_per_game"] = float(r["rebounds_per_game"])
             if r.get("player_score") is not None:
                 r["player_score"] = float(r["player_score"])
         return rows
