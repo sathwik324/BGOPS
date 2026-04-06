@@ -30,7 +30,7 @@ export default function App() {
         setRankings(r); setMatches(m); setTeams(t); setPlayers(p);
       } catch (err) {
         console.error(err);
-        setError('Could not connect to the API. Make sure the FastAPI server is running on port 8000.');
+        setError('Could not connect to the API. Ensure your backend service is running and accessible.');
       } finally { setLoading(false); }
     })();
   }, []);
