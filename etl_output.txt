@@ -1,0 +1,132 @@
+﻿python : 2026-04-07 00:26:26,610 [INFO] =======
+===============================================
+======
+At line:1 char:159
++ ... KrSjNH"; $env:DB_NAME="railway"; python 
+-m etl.load_data 2>&1 | Out-F ...
++                                      
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2 
+   026-04-07 00:2...===============:String) [  
+  ], RemoteException
+    + FullyQualifiedErrorId : NativeCommandErr 
+   or
+ 
+2026-04-07 00:26:26,610 [INFO] Starting data 
+load pipeline
+2026-04-07 00:26:26,610 [INFO] ================
+============================================
+2026-04-07 00:26:27,722 [INFO] package: 
+mysql.connector.plugins
+2026-04-07 00:26:27,722 [INFO] plugin_name: 
+caching_sha2_password
+2026-04-07 00:26:27,722 [INFO] 
+AUTHENTICATION_PLUGIN_CLASS: 
+MySQLCachingSHA2PasswordAuthPlugin
+2026-04-07 00:26:28,795 [INFO] --- Loading 
+teams ---
+2026-04-07 00:26:28,797 [INFO] Read 30 rows 
+from ./data_cache/clean\teams.csv
+2026-04-07 00:26:30,140 [INFO] Teams: 0 rows 
+affected
+2026-04-07 00:26:30,141 [INFO] --- Loading 
+players ---
+2026-04-07 00:26:30,144 [INFO] Read 578 rows 
+from ./data_cache/clean\players.csv
+2026-04-07 00:26:30,617 [INFO] Team lookup: 30 
+entries
+2026-04-07 00:26:31,317 [INFO] Players: 0 rows 
+affected
+2026-04-07 00:26:31,318 [INFO] --- Loading 
+player stats ---
+2026-04-07 00:26:31,321 [INFO] Read 578 rows 
+from ./data_cache/clean\players.csv
+2026-04-07 00:26:31,815 [INFO] Player lookup: 
+578 entries
+2026-04-07 00:26:32,428 [INFO] Player stats: 0 
+rows affected
+2026-04-07 00:26:32,428 [INFO] --- Loading 
+schedule ---
+2026-04-07 00:26:32,432 [INFO] Read 1167 rows 
+from ./data_cache/clean\schedule.csv
+2026-04-07 00:26:32,911 [INFO] Team lookup: 30 
+entries
+2026-04-07 00:26:33,868 [INFO] Schedule: 0 
+rows affected
+2026-04-07 00:26:33,869 [INFO] --- Loading 
+head-to-head ---
+2026-04-07 00:26:33,871 [INFO] Read 434 rows 
+from ./data_cache/clean\h2h.csv
+2026-04-07 00:26:34,430 [INFO] Team lookup: 30 
+entries
+2026-04-07 00:26:34,960 [INFO] H2H: 0 rows 
+affected
+2026-04-07 00:26:34,960 [INFO] --- Loading 
+upcoming games ---
+2026-04-07 00:26:35,469 [INFO] Team lookup: 30 
+entries
+2026-04-07 00:26:35,795 [INFO] Cleared 58 old 
+scheduled games from matches table
+2026-04-07 00:26:36,345 [INFO] Upcoming: 
+inserted 58 scheduled games
+2026-04-07 00:26:36,345 [INFO] --- Refreshing 
+player scores ---
+2026-04-07 00:26:37,055 [ERROR] Load pipeline 
+failed: 1267 (HY000): Illegal mix of 
+collations (utf8mb4_unicode_ci,IMPLICIT) and 
+(utf8mb4_0900_ai_ci,IMPLICIT) for operation '='
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in 
+_run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\gajul\.gemini\antigravity\BGOP
+S\etl\load_data.py", line 497, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\gajul\.gemini\antigravity\BGOP
+S\etl\load_data.py", line 478, in main
+    cursor.callproc("refresh_player_scores", 
+[SEASON])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^
+  File "C:\Users\gajul\AppData\Roaming\Python\P
+ython314\site-packages\mysql\connector\cursor.p
+y", line 629, in callproc
+    for result in 
+self._connection.cmd_query_iter(
+                  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        call, read_timeout=self._read_timeout, 
+write_timeout=self._write_timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\gajul\AppData\Roaming\Python\P
+ython314\site-packages\mysql\connector\connecti
+on.py", line 1044, in cmd_query_iter
+    yield self._handle_result(
+          ~~~~~~~~~~~~~~~~~~~^
+        self._send_cmd(
+        ^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        write_timeout,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\gajul\AppData\Roaming\Python\P
+ython314\site-packages\mysql\connector\_decorat
+ing.py", line 89, in handle_cnx_method
+    raise err
+  File "C:\Users\gajul\AppData\Roaming\Python\P
+ython314\site-packages\mysql\connector\_decorat
+ing.py", line 85, in handle_cnx_method
+    return cnx_method(cnx, *args, **kwargs)
+  File "C:\Users\gajul\AppData\Roaming\Python\P
+ython314\site-packages\mysql\connector\connecti
+on.py", line 745, in _handle_result
+    raise get_exception(packet)
+mysql.connector.errors.DatabaseError: 1267 
+(HY000): Illegal mix of collations 
+(utf8mb4_unicode_ci,IMPLICIT) and 
+(utf8mb4_0900_ai_ci,IMPLICIT) for operation '='
