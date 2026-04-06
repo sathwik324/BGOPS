@@ -75,7 +75,7 @@ def get_rankings():
 
 
 @app.get("/top-players")
-def get_top_players():
+def get_top_players(season: str = "2025-26", limit: int = 30):
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -84,10 +84,11 @@ def get_top_players():
             SELECT p.full_name, ps.points_per_game, ps.player_score
             FROM player_stats ps
             JOIN players p ON ps.player_id = p.player_id
-            WHERE ps.season = '2024-25'
+            WHERE ps.season = %s
             ORDER BY ps.player_score DESC
-            LIMIT 30
-            """
+            LIMIT %s
+            """,
+            (season, limit)
         )
         rows = cursor.fetchall()
         for r in rows:
@@ -108,9 +109,21 @@ def get_matches():
     try:
         cursor.execute(
             """
-            SELECT nba_game_id, scheduled_date, status
-            FROM matches
-            ORDER BY scheduled_date DESC
+            SELECT 
+                m.match_id, 
+                m.nba_game_id, 
+                m.scheduled_date, 
+                m.status,
+                m.home_team_id,
+                m.away_team_id,
+                th.name AS home_team, 
+                th.abbreviation AS home_abbr,
+                ta.name AS away_team, 
+                ta.abbreviation AS away_abbr
+            FROM matches m
+            JOIN teams th ON m.home_team_id = th.team_id
+            JOIN teams ta ON m.away_team_id = ta.team_id
+            ORDER BY m.scheduled_date DESC
             LIMIT 20
             """
         )
