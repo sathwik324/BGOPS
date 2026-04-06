@@ -92,12 +92,14 @@ def get_top_players(season: str = "2025-26", limit: int = 30):
         cursor.execute(
             """
             SELECT p.full_name, ps.points_per_game, ps.assists_per_game, 
-                   ps.rebounds_per_game, ps.player_score, t.name AS team_name
+                   ps.rebounds_per_game, 
+                   (ps.points_per_game + 1.5 * ps.assists_per_game + 1.2 * ps.rebounds_per_game + 2 * ps.steals_per_game + 2 * ps.blocks_per_game) AS player_score,
+                   t.name AS team_name
             FROM player_stats ps
             JOIN players p ON ps.player_id = p.player_id
             JOIN teams t ON p.team_id = t.team_id
             WHERE ps.season = %s
-            ORDER BY ps.player_score DESC
+            ORDER BY player_score DESC
             LIMIT %s
             """,
             (season, limit)
